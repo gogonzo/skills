@@ -67,6 +67,16 @@ When reviewing or refactoring:
 - **Frameworks are allowed at the edge.** The composition root (main, DI container, route wiring) is explicitly allowed to know concrete types — that is where abstractions get bound.
 - **Performance-critical paths** may inline for measured reasons. Document the measurement, not a hunch.
 
+## Language-specific references
+
+Load the matching file only when working in that language. Each file shows a violation → fix pair for every SOLID letter, with idioms that fit the language (Protocols in Python, S3 dispatch in R, concepts/variants in C++, structural typing in TypeScript).
+
+- `references/javascript.md`
+- `references/typescript.md`
+- `references/python.md`
+- `references/r.md`
+- `references/cpp.md`
+
 ## Output style
 
 - Be direct. If a design is wrong, say so in the first sentence and name the principle.

@@ -54,14 +54,34 @@ fit(data, strategy = fit_robust)                      # no inheritance lie
 
 ## I — Interface Segregation
 
-```r
-# Violation: a "model" object is expected to implement predict(), summary(),
-# plot(), tidy(), glance(), augment() — consumers that only need predict()
-# still pay for the whole surface.
+The R framing: **do not demand a fat object when you only call one method on it.**
+Accept the narrowest thing the function actually uses — usually a function, a
+data frame, or a vector — not a whole model/fit/connection object.
 
-# Fix: small, role-shaped generics. A consumer calls only the generic it needs.
-predict_only <- function(model, newdata) predict(model, newdata)
-# Callers that never call summary() never require it to exist.
+```r
+# Violation: evaluate() takes a full model object, but only ever calls predict().
+# Any caller must now construct something with a `predict` method just to test
+# a scoring rule — mocks in tests have to fake the entire model surface.
+evaluate <- function(model, data) {
+  checkmate::assert_data_frame(data)
+  pred <- predict(model, data)        # <- the only thing we use `model` for
+  mean((pred - data$y)^2)
+}
+
+# Fix: depend on the narrow capability. Callers pass a prediction function;
+# tests pass `function(d) d$x * 2` with no model object at all.
+evaluate <- function(predict_fn, data) {
+  checkmate::assert_function(predict_fn)
+  checkmate::assert_data_frame(data)
+  checkmate::assert_subset("y", names(data))
+  mean((predict_fn(data) - data$y)^2)
+}
+
+# Real use:
+evaluate(\(d) predict(fit, d), data)
+
+# Test use — no model needed:
+evaluate(\(d) d$x, data.frame(x = 1:3, y = c(1, 2, 4)))
 ```
 
 ## D — Dependency Inversion
@@ -88,8 +108,49 @@ run_report(
 )
 ```
 
-Notes for R:
-- Prefer plain functions and S3 dispatch. Reach for R6/S4 only when you have real
-  mutable state or multiple dispatch.
-- `options()` and package-level state are hidden dependencies — pass them as
-  arguments when the function is part of a public API.
+## Assertions — non-negotiable
+
+Every exported function validates its inputs on entry. R is dynamically typed;
+without assertions, a wrong-shape argument becomes a confusing error ten frames
+deep, and DIP-style injection ("pass me a function") is unsafe without a shape
+check. Prefer `checkmate` for expressive, fast assertions; `stopifnot()` is fine
+for trivial cases.
+
+```r
+fit_model <- function(data, formula, weights = NULL) {
+  checkmate::assert_data_frame(data, min.rows = 1)
+  checkmate::assert_formula(formula)
+  checkmate::assert_numeric(weights, len = nrow(data), null.ok = TRUE)
+  # ... body can now trust its inputs
+}
+```
+
+Rules:
+- Assert at the public boundary of a function, not in every internal helper.
+- Assert *shape and invariant*, not just type (`min.rows`, `len`, `any.missing = FALSE`).
+- Post-conditions on the return value of risky operations (`assert_data_frame(out)`).
+- In tests, still assert — a test that silently passes `NULL` somewhere is a lie.
+
+## Picking the object system
+
+- **Plain functions + S3** — the default. Use for almost everything. S3 dispatch
+  satisfies OCP without ceremony (see the `score()` example above).
+- **R6** — use when you genuinely need **mutable state** (a cache, a growing
+  buffer, a connection pool) or a **singleton** (a logger, a configured client).
+  R6 objects are reference-semantic, which is a tool — and a footgun — so reach
+  for it only when copy-on-modify semantics are actually wrong for the problem.
+- **S4** — use when you need **multiple dispatch** (method chosen on more than
+  one argument's class) or **strong typing** with validity checks
+  (`setValidity()`). Bioconductor-style packages are the typical home. Do not
+  use S4 just for "proper classes" — the overhead is real.
+- **Do not mix** object systems for the same concept. Pick one per type and
+  stay consistent.
+
+## Other R-specific notes
+
+- `options()`, environment variables, and package-level state are hidden
+  dependencies. For public APIs, pass them as arguments (DIP).
+- `library()` inside a function is a side effect — never do it; declare
+  dependencies in `DESCRIPTION` and call `pkg::fn()`.
+- Prefer `vapply()` over `sapply()` — you assert the return shape at the call
+  site, which is an assertion in disguise.

@@ -83,3 +83,21 @@ export const chargeLateFee = ({ payments, now }) => async (userId) => {
 // main.js — only here do we know about Stripe and the real clock.
 chargeLateFee({ payments: stripe, now: () => Date.now() });
 ```
+
+## Encapsulation — minimise the public surface
+
+- Only `export` what external callers need. Module-scoped helpers stay
+  un-exported — they are private by being unreachable.
+- Use `#private` class fields (not the `_name` convention) for true privacy;
+  `#` is enforced by the runtime, `_` is a wink.
+- Prefer closures for state that must never leak:
+  ```js
+  export function makeCounter() {
+    let n = 0;                          // truly private
+    return { inc: () => ++n, read: () => n };
+  }
+  ```
+- An `index.js` barrel should re-export only the public API — never `export *`
+  from a module that contains internal helpers.
+- Do not export a symbol "just for tests". Test through the public API, or
+  move the logic to its own small module whose public API *is* that function.

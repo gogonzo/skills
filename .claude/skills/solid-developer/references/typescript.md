@@ -95,3 +95,22 @@ class Signup {
 // main.ts
 new Signup(new PostgresUserRepo());
 ```
+
+## Encapsulation — minimise the public surface
+
+- `export` nothing by default. A type, class, or function is `export`ed only
+  when a concrete out-of-module consumer needs it.
+- Prefer runtime-enforced `#private` fields over the `private` keyword where
+  possible — `private` is erased at runtime and can be bypassed with `any`.
+- Mark everything `readonly` that doesn't need to mutate. Immutability is a
+  form of encapsulation: callers cannot reach in and change state.
+- Do not export **internal types** (request builders, DTOs, enums) through
+  your package's `index.ts`. Once exported, a consumer can import and pin
+  against them — you now own that shape forever.
+- Barrel files (`index.ts`) are the public API. Treat every symbol listed
+  there as though it were in a semver commitment.
+- If a helper must be reused across files but is not public API, put it under
+  an `internal/` folder and document that importing from `internal/` outside
+  the package is unsupported. Enforce with ESLint `no-restricted-imports`.
+- Never loosen visibility "for testing". Test through the public API, or
+  extract the logic into a module whose public API is that function.

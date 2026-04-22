@@ -146,6 +146,25 @@ Rules:
 - **Do not mix** object systems for the same concept. Pick one per type and
   stay consistent.
 
+## Encapsulation — minimise the public surface
+
+- The `NAMESPACE` file (generated from roxygen `@export`) *is* your public
+  API. Anything without `@export` is private — that is the correct default.
+  Add `@export` only when an external user genuinely needs to call the symbol.
+- Internal helpers live in the package but are not exported. Users who reach
+  for them via `pkg:::helper` are on their own; do not treat `:::` access as
+  a supported contract.
+- For R6 classes, use `private = list(...)` for fields and methods that
+  shouldn't be reachable from outside. `active` bindings are for controlled
+  read-only exposure.
+- For S4, mark slots you don't want inspected as internal by convention
+  (leading dot, e.g. `.cache`) and do not document them.
+- `@keywords internal` + omitting `@export` hides helpers from the package
+  index while still giving you testable, documented functions.
+- Never `@export` a helper just so tests can reach it. Tests in a package can
+  call internal functions directly — exporting for test convenience leaks
+  internals to every user forever.
+
 ## Other R-specific notes
 
 - `options()`, environment variables, and package-level state are hidden

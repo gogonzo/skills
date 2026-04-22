@@ -106,6 +106,42 @@ FileLogger log;
 PaymentService svc(log, []{ return std::chrono::system_clock::now(); });
 ```
 
+## Encapsulation — minimise the public surface
+
+C++ gives you the strictest tools of any language here; use them.
+
+- Start every class with `private:`. Only members that callers *must* reach
+  belong in `public:`. `protected:` is for base-class contracts, not a
+  convenient back door for "friend-ish" code.
+- Data members are private by default — always. Expose read access with
+  `const` accessors only when a real caller needs it. Public data fields
+  are an ISP and encapsulation violation in one.
+- Inside a `.cpp`, put file-local helpers in an **unnamed namespace**:
+  ```cpp
+  namespace { double to_cents(double dollars) { return dollars * 100.0; } }
+  ```
+  They have internal linkage and are unreachable from other translation units.
+- Keep the header minimal — forward-declare types, do not `#include` in
+  the header when the `.cpp` can. Every symbol in a public header is a
+  binary-compat commitment.
+- For truly hidden implementation state, use the **PIMPL idiom**:
+  ```cpp
+  // widget.h — stable public surface
+  class Widget {
+  public:
+      Widget();
+      ~Widget();
+      void draw() const;
+  private:
+      struct Impl;
+      std::unique_ptr<Impl> p_;   // all state hidden in the .cpp
+  };
+  ```
+- `friend` is a privacy hole — use it only for tightly coupled pairs
+  (iterator/container), never to satisfy a unit test.
+- Never loosen access "for testing". If a test needs an internal, extract
+  that internal into its own small class whose public API *is* that concern.
+
 Notes for C++:
 - Prefer `std::unique_ptr<Interface>` over raw `new`/`delete` when injecting.
 - If the set of variants is closed and known at compile time, `std::variant` +

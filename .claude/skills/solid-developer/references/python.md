@@ -98,3 +98,22 @@ def renew_token(user_id: str, *, auth: AuthClient, now: Callable[[], float]) -> 
 # main.py — composition root wires concretes.
 renew_token(uid, auth=HttpAuthClient(), now=time.time)
 ```
+
+## Encapsulation — minimise the public surface
+
+- Prefix every name that isn't public API with a single leading underscore
+  (`_helper`, `_InternalCache`). This is enforced socially but respected by
+  tooling (`from module import *` skips them; IDEs flag cross-module use).
+- Declare the public API explicitly with `__all__` in every public module:
+  ```python
+  __all__ = ["Signup", "UserRepo"]    # everything else is private
+  ```
+- Double-underscore `__name` invokes name mangling — reserve it for class
+  internals that must not collide with subclasses, not general "privacy".
+- Put internal modules under an `_internal/` subpackage. Cross-package
+  imports from `_internal` are a review-time red flag.
+- `@dataclass(frozen=True)` for immutable value objects — immutability is
+  encapsulation for data.
+- Never move a name from `_private` to public solely to test it. Test through
+  the public function, or extract a new module whose public API is that
+  function.

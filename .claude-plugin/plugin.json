@@ -1,0 +1,9 @@
+{
+  "name": "gogonzo-skills",
+  "description": "Strict SOLID-principles developer and disciplined unit-tester skills for code review and quality enforcement",
+  "version": "0.1.0",
+  "author": { "name": "gogonzo" },
+  "repository": "https://github.com/gogonzo/skills",
+  "license": "MIT",
+  "keywords": ["solid", "testing", "code-quality", "review", "refactoring"]
+}

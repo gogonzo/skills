@@ -1,0 +1,11 @@
+{
+  "name": "gogonzo-skills",
+  "owner": { "name": "gogonzo" },
+  "plugins": [
+    {
+      "name": "gogonzo-skills",
+      "source": ".",
+      "description": "SOLID developer + unit-tester skills, plus language-agnostic general-developer subagent (R, JS, TS, Python, C, C++)"
+    }
+  ]
+}

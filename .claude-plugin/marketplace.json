@@ -5,7 +5,7 @@
     {
       "name": "gogonzo-skills",
       "source": ".",
-      "description": "Strict SOLID developer and unit-tester skills"
+      "description": "SOLID developer + unit-tester skills, plus language-agnostic general-developer subagent (R, JS, TS, Python, C, C++)"
     }
   ]
 }

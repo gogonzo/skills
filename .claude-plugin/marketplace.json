@@ -3,9 +3,19 @@
   "owner": { "name": "gogonzo" },
   "plugins": [
     {
-      "name": "gogonzo-skills",
-      "source": ".",
-      "description": "SOLID developer + unit-tester skills, plus language-agnostic general-developer subagent (R, JS, TS, Python, C, C++)"
+      "name": "solid-developer",
+      "source": "./solid-developer",
+      "description": "Strict SOLID enforcement with language-specific references (R, JS, TS, Python, C/C++)"
+    },
+    {
+      "name": "unit-tester",
+      "source": "./unit-tester",
+      "description": "Disciplined unit-test authoring and review (FIRST, AAA, public-API-only, precise behaviour names)"
+    },
+    {
+      "name": "general-developer",
+      "source": "./general-developer",
+      "description": "Language-agnostic developer subagent — pairs with solid-developer and unit-tester"
     }
   ]
 }

@@ -1,0 +1,9 @@
+{
+  "name": "unit-tester",
+  "description": "Disciplined unit-test authoring and review — FIRST, AAA, public-API-only, precise behaviour-named tests; pushes back on weak community testing norms",
+  "version": "0.1.0",
+  "author": { "name": "gogonzo" },
+  "repository": "https://github.com/gogonzo/skills",
+  "license": "MIT",
+  "keywords": ["testing", "tdd", "unit-tests", "code-quality"]
+}

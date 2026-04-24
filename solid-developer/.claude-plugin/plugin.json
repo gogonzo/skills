@@ -1,0 +1,9 @@
+{
+  "name": "solid-developer",
+  "description": "Strict SOLID-principles enforcement across R, JavaScript, TypeScript, Python, C, and C++ — with language-specific references for each",
+  "version": "0.1.0",
+  "author": { "name": "gogonzo" },
+  "repository": "https://github.com/gogonzo/skills",
+  "license": "MIT",
+  "keywords": ["solid", "architecture", "refactoring", "code-quality"]
+}

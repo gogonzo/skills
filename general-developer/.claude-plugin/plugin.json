@@ -1,0 +1,9 @@
+{
+  "name": "general-developer",
+  "description": "Language-agnostic developer subagent for R, JavaScript, TypeScript, Python, C, and C++. Applies SOLID and FIRST/AAA over local community idioms. Works best with the solid-developer and unit-tester plugins installed",
+  "version": "0.1.0",
+  "author": { "name": "gogonzo" },
+  "repository": "https://github.com/gogonzo/skills",
+  "license": "MIT",
+  "keywords": ["agent", "developer", "polyglot", "code-review"]
+}

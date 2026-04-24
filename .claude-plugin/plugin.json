@@ -1,9 +1,0 @@
-{
-  "name": "gogonzo-skills",
-  "description": "Strict SOLID-principles developer and disciplined unit-tester skills, plus a language-agnostic general-developer subagent that applies cross-language discipline over local idioms",
-  "version": "0.1.0",
-  "author": { "name": "gogonzo" },
-  "repository": "https://github.com/gogonzo/skills",
-  "license": "MIT",
-  "keywords": ["solid", "testing", "code-quality", "review", "refactoring", "r", "javascript", "typescript", "python", "c", "cpp"]
-}
